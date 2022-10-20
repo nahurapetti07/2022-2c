@@ -20,4 +20,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Entidades\MetadataTypes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Entidades\MetadataTypes\" />
+  </ItemGroup>
 </Project>

@@ -65,5 +65,66 @@ namespace EnciclopediaDarwin.Logica
             return _context.Especies.ToList();
         }
 
+        public void VerTipo()
+        {
+            var tipoEspecie = _context.TipoEspecies
+                                    .Where(t => t.Nombre.Contains(""))
+                                    .Select(t1 => t1).FirstOrDefault();
+
+            List<Especie> especies = tipoEspecie.Especies.ToList();
+
+            foreach (Especie es in especies)
+            {
+                Console.Write(es.Nombre);
+            }
+        }
+
+        public List<Especie> ObtenerPorBusqueda(string filtro)
+        {
+            // 1) Origen de datos
+            // _context con 3 especies
+
+            // 2) Creación de consulta - Sintaxis de consulta
+            // IQueryable<Especie>
+            var especiesQuery = (from e in _context.Especies
+                           join t in _context.TipoEspecies
+                           on e.IdTipoEspecie equals t.IdTipoEspecie
+                           where t.Nombre.Contains(filtro)
+                           orderby e.Nombre
+                           select e);
+
+            // 2) Creación de consulta - Sintaxis de metodo
+            // IQueryable<Especie>
+            var especiesMethod = _context.Especies
+                           .Where(e => e.Nombre.Contains(filtro))
+                           .Select(e1 => e1)
+                           .OrderBy(e2 => e2.Nombre);
+
+            // 2 y 3) Creación de consulta y ejecución en una sola acción
+            // List<Especie>
+            // var especiesMethod = _context.Especies
+            //                .Where(e => e.Nombre.Contains(filtro))
+            //                .Select(e1 => e1)
+            //                .OrderBy(e2 => e2.Nombre).List();
+
+            List<Especie> especies = especiesQuery.ToList();
+
+            // Agregado de 4ta Especie
+            Especie newEsp = new Especie();
+            _context.Especies.Add(newEsp);
+            _context.SaveChanges();
+
+            // 3) Ejecución de consulta
+            foreach (Especie es in especiesMethod)
+            {
+                Console.Write(es.IdTipoEspecieNavigation.Nombre);
+            }
+
+            // 3) Ejecución de consulta
+            //return especiesMethod.ToList();
+
+            return especies;
+        }
+
     }
 }
